@@ -3,8 +3,6 @@ package com.example.learnJavaPackage;
 
 
 import java.awt.*;
-import java.awt.Toolkit;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -13,6 +11,7 @@ import java.time.LocalDate; //importing awt packages
    							//importing awt event packages
 import javax.swing.*;     //importing swing packages
 import javax.swing.border.BevelBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -22,6 +21,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -59,7 +59,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
+import java.io.File;
 import java.io.FileInputStream;
 
 import java.io.FileOutputStream;
@@ -7642,234 +7642,192 @@ private void myntraOrderLaunch() {
 	
 	//Myntra Payment Windows Code
 
-	private void myntraPaymentLaunch() {
-		prepareGUI("Myntra Payment",700,398);
-		
-		mainFrame.addWindowListener(new WindowAdapter() {
-			public void windowClosinglimeroadLaunch(WindowEvent windowEvent) {
-				System.exit(0);
-			}
-		});
-		
-		
-		JButton openfile = new JButton("Open");
-		openfile.setForeground(SystemColor.desktop);
-		openfile.setBackground(SystemColor.activeCaption);
-		openfile.setBounds(150, 140, 94, 31);
-		openfile.setHorizontalAlignment(SwingConstants.LEFT);
-		
-		JButton transfer = new JButton("Transfer");
-		transfer.setForeground(SystemColor.desktop);
-		transfer.setBackground(SystemColor.activeCaption);
-		transfer.setBounds(450, 140, 94, 31);
-		
-		
-		JButton back = new JButton("Back");
-		back.setBounds(300, 300, 94, 31);
-		back.setForeground(SystemColor.desktop);
-		back.setBackground(SystemColor.controlDkShadow);
-		
-		
-		back.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent backflipkartOrderEvent) {
-				
-				mainFrame.dispose();
-				paymentLaunch();
-				
-			}
-		});
-		JLabel path = new JLabel("NO FILES Selected");
-		path.setBounds(250, 260, 300, 31);
-		
-		openfile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent openfileEvent) {
-				
-				JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory()); 
-				
-				
-				 int r = j.showOpenDialog(null); 
-				 if (r == JFileChooser.APPROVE_OPTION) 
-					  
-		            { 
-		                // set the label to the path of the selected file 
-		                path.setText(j.getSelectedFile().getAbsolutePath()); 
-		            } 
-		            // if the user cancelled the operation 
-		            else
-		                path.setText("the user cancelled the operation");
-				
-			}
-			
-			
-			
-		});
-		
-		transfer.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent transferEvent) {
-				
-				Connection conn = null;
-				
-				   Statement stmt = null;
-				   
-				   try{
-					 //STEP 2: Register JDBC driver
-					      Class.forName("com.mysql.jdbc.Driver");
+private void myntraPaymentLaunch() {
+        prepareGUI("Myntra Payment", 700, 398);
 
-					      //STEP 3: Open a connection
-					      System.out.println("Connecting to a selected database...");
-					      conn = DriverManager.getConnection(DB_URL, USER, PASS);
-					      System.out.println("Connected database successfully...");
-					     // PreparedStatement pstm = null ;
-					      
-					      
-					      //Reading the selected excel File
-					     
-					      FileInputStream input = new FileInputStream(path.getText());
-					      System.out.println(input);
-					      POIFSFileSystem fs = new POIFSFileSystem( input );
-					      HSSFWorkbook wb = new HSSFWorkbook(fs);
-					      HSSFSheet sheet = wb.getSheetAt(0);
-					      Row row;
-					      for(int i=1; i<=sheet.getLastRowNum(); i++){
-				                row = sheet.getRow(i);
-				                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-				                DataFormatter formatter = new DataFormatter();
-				               
-				               //System.out.println(reportDate);
-				               //java.sql.Date orderedOn = new java.sql.Date(orderedOnDate);
-				               
-				              
-				               
-				               //java.sql.Date orderedOn = new java.sql.Date(orderedOnjava);
-				            //   Date orderedOn = Date.valueOf(orderedOnString);
-				                //System.out.println(orderOn);
-				                String neftRef  = formatter.formatCellValue(row.getCell(0));
-				                
-				                String paymentType  = formatter.formatCellValue(row.getCell(10));
-				                
-				                java.util.Date payDateOn  =  row.getCell(20).getDateCellValue();
-					            String payDate        = df.format(payDateOn );
+        mainFrame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent windowEvent) {
+                System.exit(0);
+            }
+        });
+
+        JButton openfile = new JButton("Open");
+        openfile.setForeground(SystemColor.desktop);
+        openfile.setBackground(SystemColor.activeCaption);
+        openfile.setBounds(150, 140, 94, 31);
+        openfile.setHorizontalAlignment(SwingConstants.LEFT);
+
+        JButton transfer = new JButton("Transfer");
+        transfer.setForeground(SystemColor.desktop);
+        transfer.setBackground(SystemColor.activeCaption);
+        transfer.setBounds(450, 140, 94, 31);
+
+        JButton back = new JButton("Back");
+        back.setBounds(300, 300, 94, 31);
+        back.setForeground(SystemColor.desktop);
+        back.setBackground(SystemColor.controlDkShadow);
+
+        back.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent backflipkartOrderEvent) {
+                mainFrame.dispose();
+                // Assuming paymentLaunch() is another method that navigates back
+                //paymentLaunch();
+            }
+        });
+
+        JLabel path = new JLabel("NO FILES Selected");
+        path.setBounds(250, 260, 300, 31);
+
+        openfile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent openfileEvent) {
+                JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+                j.setMultiSelectionEnabled(true);
+
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel and CSV Files", "csv", "xlsx", "xls");
+                j.setFileFilter(filter);
+
+                int r = j.showOpenDialog(null);
+                if (r == JFileChooser.APPROVE_OPTION) {
+                    File[] selectedFiles = j.getSelectedFiles();
+                    StringBuilder filePaths = new StringBuilder();
+                    for (File file : selectedFiles) {
+                        filePaths.append(file.getAbsolutePath()).append("\n");
+                    }
+                    path.setText(filePaths.toString());
+                } else {
+                    path.setText("The user cancelled the operation");
+                }
+            }
+        });
+
+        transfer.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent transferEvent) {
+                Connection conn = null;
+                Statement stmt = null;
+
+                try {
+                    // Register JDBC driver
+                    Class.forName("com.mysql.jdbc.Driver");
+
+                    // Open a connection
+                    conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+                    String[] filePaths = path.getText().split("\n");
+                    for (String filePath : filePaths) {
+                        if (filePath.trim().isEmpty()) continue;
+
+                        FileInputStream input = new FileInputStream(filePath.trim());
+                        Workbook workbook = null;
+
+                        // Determine if the file is .xlsx or .xls
+                        if (filePath.toLowerCase().endsWith(".xlsx")) {
+                            workbook = new XSSFWorkbook(input);  // Use XSSFWorkbook for .xlsx files
+                        } else if (filePath.toLowerCase().endsWith(".xls")) {
+                            workbook = new HSSFWorkbook(input);  // Use HSSFWorkbook for .xls files
+                        }
+
+                        if (workbook != null) {
+                            Sheet sheet = workbook.getSheetAt(0);
+                            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                                Row row = sheet.getRow(i);
+                                DataFormatter formatter = new DataFormatter();
+                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+
+                                String neftRef = formatter.formatCellValue(row.getCell(0));
+                                String paymentType = formatter.formatCellValue(row.getCell(10));
+                                
+                                
+                                
+					            String payDate        =  formatter.formatCellValue(row.getCell(20));
 					            
-					            String orderType  = formatter.formatCellValue(row.getCell(24));
-					            
-					            String releaseID  = formatter.formatCellValue(row.getCell(25));
-					            
-					            String packetID  = formatter.formatCellValue(row.getCell(26));
-					            
-					            Double settlementValue  = (Double) row.getCell(17).getNumericCellValue();
-					            
-					            Double customerPaid  = (Double) row.getCell(5).getNumericCellValue();
-					            
-					            Double commission =(Double) row.getCell(6).getNumericCellValue();
-					            
-					            Double tcsigst =(Double) row.getCell(7).getNumericCellValue();
-					            
-					            Double tcscgst =(Double) row.getCell(8).getNumericCellValue();
-					            
-					            Double tcssgst =(Double) row.getCell(9).getNumericCellValue();
-					           
-					            Double tds =(Double) row.getCell(11).getNumericCellValue();
-					            			            
-					            Double commissionWithTcs =commission+tcsigst+tcscgst+tcssgst;
-					            
-					            
-					            Double logisticCommission =(Double) row.getCell(16).getNumericCellValue();
-				                
-					            String uniquekey2="";
-					            String uniqueKey= neftRef+releaseID+orderType;
-					            
-					            String sql5= "select uniqueKey from myntra_payment_daily where uniqueKey=?";
-					            PreparedStatement preparedstmt5 = conn.prepareStatement(sql5);
-					               preparedstmt5.setString(1, uniqueKey);
-					               
-					               ResultSet rscheckkey5 = preparedstmt5.executeQuery();
-					               while(rscheckkey5.next()) {
-					            	   uniquekey2 = rscheckkey5.getString("uniqueKey");
-					               }
-					               if(uniquekey2.equalsIgnoreCase(uniqueKey)) {
-					            	   System.out.println("No Need of Operations");
-					               }else {
-					            
-					            String sql = " INSERT ignore INTO myntra_payment_daily values(?,?,?,?,?,?,?,?,?,?,?,?)";
-							      PreparedStatement preparedstmt = conn.prepareStatement(sql);
-							      
-							     
-							      preparedstmt.setString(1, uniqueKey);
-							      preparedstmt.setString(2, neftRef);
-							      preparedstmt.setString(3, paymentType);
-							      preparedstmt.setString(4, payDate);
-							      preparedstmt.setString(5, orderType);
-							      preparedstmt.setString(6, releaseID);
-							      preparedstmt.setString(7, packetID);
-							      preparedstmt.setDouble(8, customerPaid);
-							      preparedstmt.setDouble(9, commissionWithTcs);
-							      preparedstmt.setDouble(10, logisticCommission);
-							      preparedstmt.setDouble(11, tds);
-							      preparedstmt.setDouble(12, settlementValue);
-							      
-							     preparedstmt.execute(); 
-							     if(orderType.equalsIgnoreCase("Forward")) {
-								      String sql1 = "UPDATE IGNORE myntra_ppmp_order set fwdPaymentStatus=?,fwdSettleValue=fwdSettleValue+? ,settleValue=settleValue+?,reconcillationStatus=? where orderReleaseId=?";
-								      PreparedStatement preparedstmt1 = conn.prepareStatement(sql1);
-								      preparedstmt1.setString(1, "Yes");
-								      preparedstmt1.setDouble(2, settlementValue);
-								      preparedstmt1.setDouble(3, settlementValue);
-								      preparedstmt1.setString(4,"No" );
-								      preparedstmt1.setString(5,releaseID );
-								      
-								      preparedstmt1.execute();
-								      }else if(orderType.equalsIgnoreCase("Reverse")) {
-								    	  String sql1 = "UPDATE IGNORE myntra_ppmp_order set revPaymentStatus=?,revSettleValue=revSettleValue+? ,settleValue=settleValue+?,reconcillationStatus=? where orderReleaseId=?";
-									      PreparedStatement preparedstmt1 = conn.prepareStatement(sql1);
-									      preparedstmt1.setString(1, "Yes");
-									      preparedstmt1.setDouble(2, settlementValue);
-									      preparedstmt1.setDouble(3, settlementValue);
-									      preparedstmt1.setString(4,"No" );
-									      preparedstmt1.setString(5,releaseID );
-									      preparedstmt1.execute();
-								      }else {
-								    	  System.out.println("Nothing to update");
-								      }
-				              				               				               
-							     System.out.println("Imported Rows"+i);
-					               }
-				            }
-				     
-				      
-			}catch(SQLException se){
-			      //Handle errors for JDBC
-			      se.printStackTrace();
-			   }catch(Exception e1){
-			      //Handle errors for Class.forName
-			      e1.printStackTrace();
-			   }finally{
-			      //finally block used to close resources
-			      try{
-			         if(stmt!=null)
-			            conn.close();
-			      }catch(SQLException se){
-			      }// do nothing
-			      try{
-			         if(conn!=null)
-			            conn.close();
-			      }catch(SQLException se){
-			         se.printStackTrace();
-			      }//end finally try
-			   }//end try
-			   System.out.println("Goodbye!");
-			   path.setText("Transfer Complete");
-			
-			}
-		});
-		headerLabel.setBounds(150, 11, 400, 31);
-		statusLabel.setBounds(180, 340, 312, 31);
-		headerLabel.setText("Popnetic Warehousing System");
-		controlPanel.add(openfile);
-		controlPanel.add(path);
-		controlPanel.add(transfer);
-		controlPanel.add(back);
+                                String orderType = formatter.formatCellValue(row.getCell(24));
+                                String releaseID = formatter.formatCellValue(row.getCell(25));
+                                String packetID = formatter.formatCellValue(row.getCell(26));
+                                Double settlementValue = (Double) row.getCell(17).getNumericCellValue();
+                                Double customerPaid = (Double) row.getCell(5).getNumericCellValue();
+                                Double commission = (Double) row.getCell(6).getNumericCellValue();
+                                Double tcsigst = (Double) row.getCell(7).getNumericCellValue();
+                                Double tcscgst = (Double) row.getCell(8).getNumericCellValue();
+                                Double tcssgst = (Double) row.getCell(9).getNumericCellValue();
+                                Double tds = (Double) row.getCell(11).getNumericCellValue();
+
+                                Double commissionWithTcs = commission + tcsigst + tcscgst + tcssgst;
+                                Double logisticCommission = (Double) row.getCell(16).getNumericCellValue();
+
+                                String uniqueKey = neftRef + releaseID + orderType;
+
+                                // Database operations
+                                String sql5 = "SELECT uniqueKey FROM myntra_payment_daily WHERE uniqueKey=?";
+                                PreparedStatement preparedstmt5 = conn.prepareStatement(sql5);
+                                preparedstmt5.setString(1, uniqueKey);
+                                ResultSet rscheckkey5 = preparedstmt5.executeQuery();
+
+                                if (rscheckkey5.next()) {
+                                    System.out.println("No Need of Operations for uniqueKey: " + uniqueKey);
+                                } else {
+                                    String sql = "INSERT IGNORE INTO myntra_payment_daily VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
+                                    PreparedStatement preparedstmt = conn.prepareStatement(sql);
+                                    preparedstmt.setString(1, uniqueKey);
+                                    preparedstmt.setString(2, neftRef);
+                                    preparedstmt.setString(3, paymentType);
+                                    preparedstmt.setString(4, payDate);
+                                    preparedstmt.setString(5, orderType);
+                                    preparedstmt.setString(6, releaseID);
+                                    preparedstmt.setString(7, packetID);
+                                    preparedstmt.setDouble(8, customerPaid);
+                                    preparedstmt.setDouble(9, commissionWithTcs);
+                                    preparedstmt.setDouble(10, logisticCommission);
+                                    preparedstmt.setDouble(11, tds);
+                                    preparedstmt.setDouble(12, settlementValue);
+                                    preparedstmt.execute();
+
+                                    if (orderType.equalsIgnoreCase("Forward")) {
+                                        String sql1 = "UPDATE IGNORE myntra_ppmp_order SET fwdPaymentStatus=?, fwdSettleValue=fwdSettleValue+?, settleValue=settleValue+?, reconcillationStatus=? WHERE orderReleaseId=?";
+                                        PreparedStatement preparedstmt1 = conn.prepareStatement(sql1);
+                                        preparedstmt1.setString(1, "Yes");
+                                        preparedstmt1.setDouble(2, settlementValue);
+                                        preparedstmt1.setDouble(3, settlementValue);
+                                        preparedstmt1.setString(4, "No");
+                                        preparedstmt1.setString(5, releaseID);
+                                        preparedstmt1.execute();
+                                    } else if (orderType.equalsIgnoreCase("Reverse")) {
+                                        String sql1 = "UPDATE IGNORE myntra_ppmp_order SET revPaymentStatus=?, revSettleValue=revSettleValue+?, settleValue=settleValue+?, reconcillationStatus=? WHERE orderReleaseId=?";
+                                        PreparedStatement preparedstmt1 = conn.prepareStatement(sql1);
+                                        preparedstmt1.setString(1, "Yes");
+                                        preparedstmt1.setDouble(2, settlementValue);
+                                        preparedstmt1.setDouble(3, settlementValue);
+                                        preparedstmt1.setString(4, "No");
+                                        preparedstmt1.setString(5, releaseID);
+                                        preparedstmt1.execute();
+                                    }
+                                }
+                            }
+                            workbook.close();
+                        }
+                    }
+                } catch (SQLException se) {
+                    se.printStackTrace();
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                } finally {
+                    try {
+                        if (stmt != null) conn.close();
+                    } catch (SQLException se) {
+                        se.printStackTrace();
+                    }
+                }
+                path.setText("Transfer Complete");
+            }
+        });
+
+	    headerLabel.setBounds(150, 11, 400, 31);
+	    statusLabel.setBounds(180, 340, 312, 31);
+	    headerLabel.setText("Popnetic Warehousing System");
+	    controlPanel.add(openfile);
+	    controlPanel.add(path);
+	    controlPanel.add(transfer);
+	    controlPanel.add(back);
 	}
-		
 
 	
 	//Myntra Return Launch Code
